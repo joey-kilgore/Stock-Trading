@@ -1,0 +1,5 @@
+{
+    "key" : "ALPACA_KEY",
+    "secret" : "ALPACA_SECRET",
+    "alpha" : "ALPHAVANTAGE_KEY"
+}
