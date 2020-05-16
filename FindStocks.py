@@ -38,20 +38,33 @@ for sym in symbols:
     mentions[sym] = 0
 
 
+
+urlNum = 0
 for url in urlList:
-    # basic setup of text and symbols we will search for
+    urlNum += 1
+    print("URL " + str(urlNum) + "/" + str(len(urlList)))
+    foundOnSite = []
+    
     try:
         text = getTextFromURL(url)
     except:
         print("FAILED URL : " + url)
         continue
 
+    # print(url) # DEBUG CODE
     for line in text:
         if(line.find('(') != -1):
             for sym in symbols:
-                if(line.find('(' + sym + ')') != -1):
-                    mentions[sym] += 1
+                if(sym in foundOnSite):
+                    continue
 
+                if(line.find("("+sym+")") != -1 or line.find(":"+sym+")") != -1):
+                    # print(sym + " : " + line) # DEBUG CODE
+                    mentions[sym] += 1
+                    foundOnSite.append(sym)
+
+print()
+print("STOCK MENTIONS")
 for key in mentions.keys():
     if(mentions[key] > 0):
         print(key + " : " + str(mentions[key]))
