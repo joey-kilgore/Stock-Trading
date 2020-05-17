@@ -2,6 +2,8 @@ import html2text
 import requests
 import ReadSymbols
 import Spreadsheet
+import MathAnalysis
+import time
 
 def getTextFromURL(url):
     # get the html from the url
@@ -67,3 +69,10 @@ def getMentionedStocks():
 if(__name__ == "__main__"):
     mentionTuples = getMentionedStocks()
 
+    for mention in mentionTuples:
+       try:
+            score = MathAnalysis.scoreStock(mention[0])
+            print(mention[0] + " mentioned : " + str(mention[1]) + " times scored : " + str(score))
+        except:
+            print(mention[0] + " failed to access")
+        time.sleep(60) # sleep between each stock to not overload alpha vantage

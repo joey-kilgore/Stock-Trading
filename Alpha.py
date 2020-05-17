@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import json
 
-def getMinInterval(ticker):
+def getMinInterval(ticker, showTable=False):
     keys = json.load(open('keys.json'))
 
     # Basic collection of stock data
@@ -35,13 +35,14 @@ def getMinInterval(ticker):
     df.volume = df.volume.astype(int)
 
     #check the data
-    print(ticker)
-    print(df.head())
-    print()
+    if(showTable):
+        print(ticker)
+        print(df.head())
+        print()
 
     return df
 
-def getDayInterval(ticker):
+def getDayInterval(ticker, showTable=False):
     keys = json.load(open('keys.json'))
 
     # Basic collection of stock data
@@ -71,9 +72,10 @@ def getDayInterval(ticker):
     df.low = df.low.astype(float)
     df.volume = df.volume.astype(int)
 
-    #check the data
-    print(ticker)
-    print(df.head())
-    print()
+    # CHECK DATA
+    if(showTable):
+        print(ticker)
+        print(df.head())
+        print()
 
     return df
