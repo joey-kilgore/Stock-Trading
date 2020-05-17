@@ -16,42 +16,54 @@ def getTextFromURL(url):
 
     return text
 
+def getMentionedStocks():
+    # Setup for all urls
+    urlList = Spreadsheet.getURLs()
+    symbols = ReadSymbols.getSymbols()
 
-# Setup for all urls
-urlList = Spreadsheet.getURLs()
-symbols = ReadSymbols.getSymbols()
+    # mentions will track the number of times a stock has been mentioned
+    mentions = {}
+    for sym in symbols:
+        mentions[sym] = 0
 
-# mentions will track the number of times a stock has been mentioned
-mentions = {}
-for sym in symbols:
-    mentions[sym] = 0
+    urlNum = 0
+    for url in urlList:
+        urlNum += 1
+        print("URL " + str(urlNum) + "/" + str(len(urlList)))
+        foundOnSite = []
 
-urlNum = 0
-for url in urlList:
-    urlNum += 1
-    print("URL " + str(urlNum) + "/" + str(len(urlList)))
-    foundOnSite = []
+        try:
+            text = getTextFromURL(url)
+        except:
+            print("FAILED URL : " + url)
+            continue
 
-    try:
-        text = getTextFromURL(url)
-    except:
-        print("FAILED URL : " + url)
-        continue
+        # print(url) # DEBUG CODE
+        for line in text:
+            if(line.find('(') != -1):
+                for sym in symbols:
+                    if(sym in foundOnSite):
+                        continue
 
-    # print(url) # DEBUG CODE
-    for line in text:
-        if(line.find('(') != -1):
-            for sym in symbols:
-                if(sym in foundOnSite):
-                    continue
+                    if(line.find("("+sym+")") != -1 or line.find(":"+sym+")") != -1):
+                        # print(sym + " : " + line) # DEBUG CODE
+                        mentions[sym] += 1
+                        foundOnSite.append(sym)
 
-                if(line.find("("+sym+")") != -1 or line.find(":"+sym+")") != -1):
-                    # print(sym + " : " + line) # DEBUG CODE
-                    mentions[sym] += 1
-                    foundOnSite.append(sym)
+    # get the stocks that were mentioned more than once and sort them accordingly
+    highMentions = []
+    for key in mentions.keys():
+        if(mentions[key] > 0):
+            # print(key + " : " + str(mentions[key])) # DEBUG CODE
+            highMentions.append((key, mentions[key]))
+    
+    highMentions = sorted(highMentions, key= lambda x: x[1], reverse=True)
 
-print()
-print("STOCK MENTIONS")
-for key in mentions.keys():
-    if(mentions[key] > 0):
-        print(key + " : " + str(mentions[key]))
+    print()
+    print("NUMBER OF STOCKS FOUND : " + str(len(highMentions)))
+    return highMentions
+    
+
+if(__name__ == "__main__"):
+    mentionTuples = getMentionedStocks()
+
